@@ -3,23 +3,41 @@ import tensorflow_datasets as tfds
 from sentencepiece import SentencePieceProcessor
 import numpy as np
 import time
+import json
 
-TOKENIZER = SentencePieceProcessor()
-TOKENIZER.load('cp.320.model')
+#TOKENIZER = SentencePieceProcessor()
+#TOKENIZER.load('cp.320.model')
 
 class Loader():
   def __init__(self):
-    ds = tfds.load('cnn_dailymail', split='train')
-    self.examples = []
-    for example in tfds.as_numpy(ds):
-      self.examples.append(example)
-    self.total_examples = len(self.examples)
+      self.data = {}
 
-  def load_random_question(self):
-    number = np.random.randint(0, self.total_examples)
-    return self.examples[number]['article'], self.examples[number]['highlights']
-  
-loader = Loader()
+  def load_data_from_tf(self):
+    ds_train = tfds.load('cnn_dailymail', split='train')
+    ds_test = tfds.load('cnn_dailymail', split='test')
+    train_data = []
+    test_data = []
+    for example in tfds.as_numpy(ds_train):
+        train_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+    for example in tfds.as_numpy(ds_test):
+        test_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+    self.data = {'train': train_data, 'test': test_data}
+
+  def write_to_file(self):  
+      with open('cnn_dailymail.txt', 'w') as f:
+          f.write(json.dumps(self.data))
+
+  def load_file(self):  
+      with open('cnn_dailymail.txt', 'r') as f:
+          data = json.loads(f.read())
+          self.data = data
+
+  #def load_random_question(self):
+    #number = np.random.randint(0, self.total_examples)
+    #return self.examples[number]['article'], self.examples[number]['highlights']
+   
+          
+
 
 def create_padding(text, amount=4096):
   if len(text) < amount:
@@ -54,4 +72,7 @@ def lm_input_function(n_devices):
 #input()
 #print(*m[0])
 
-print(loader.examples)
+loader = Loader()
+#loader.load_data_from_tf()
+#loader.write_to_file()
+#loader.load_file()
