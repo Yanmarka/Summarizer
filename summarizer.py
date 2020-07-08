@@ -5,8 +5,8 @@ import numpy as np
 import time
 import json
 
-#TOKENIZER = SentencePieceProcessor()
-#TOKENIZER.load('cp.320.model')
+TOKENIZER = SentencePieceProcessor()
+TOKENIZER.load('cp.320.model')
 
 class Loader():
   def __init__(self):
@@ -32,11 +32,15 @@ class Loader():
           data = json.loads(f.read())
           self.data = data
 
-  #def load_random_question(self):
-    #number = np.random.randint(0, self.total_examples)
-    #return self.examples[number]['article'], self.examples[number]['highlights']
+  def load_random_question(self, ds='train'):
+    number = np.random.randint(0, len(self.data[ds])) #TODO Should it be -1?
+    return self.data[ds][number]['article'], self.data[ds][number]['highlights']
    
-          
+  def convert_to_textfile(self, path="input.txt"):
+      with open(path, "w") as f:
+        for example in self.data['test']:
+            f.write(example['article'])
+            f.write(example['highlights'])
 
 
 def create_padding(text, amount=4096):
@@ -63,16 +67,9 @@ def lm_input_function(n_devices):
     mask = np.array(mask)
     yield (values, values, mask)
 
-#summarize_inputs = trax.supervised.inputs.Inputs(lm_input_function)
-
-#s = time.time()
-#x, _, m = next(summarize_inputs.train_stream(1))
-#print(time.time()-s)
-#print(*x[0])
-#input()
-#print(*m[0])
 
 loader = Loader()
 #loader.load_data_from_tf()
 #loader.write_to_file()
 #loader.load_file()
+#loader.convert_to_textfile()
