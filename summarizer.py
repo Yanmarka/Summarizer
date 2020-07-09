@@ -4,9 +4,11 @@ from sentencepiece import SentencePieceProcessor
 import numpy as np
 import time
 import json
+import random
+import math
 
-TOKENIZER = SentencePieceProcessor()
-TOKENIZER.load('cp.320.model')
+#TOKENIZER = SentencePieceProcessor()
+#TOKENIZER.load('vocab.model')
 
 class Loader():
   def __init__(self):
@@ -37,8 +39,11 @@ class Loader():
     return self.data[ds][number]['article'], self.data[ds][number]['highlights']
    
   def convert_to_textfile(self, path="input.txt"):
+      subset_length = math.floor(len(self.data['train'])/2)
+      training_data = self.data['train']
+      random.shuffle(training_data)
       with open(path, "w") as f:
-        for example in self.data['test']:
+        for example in training_data[:subset_length]:
             f.write(example['article'])
             f.write(example['highlights'])
 
@@ -56,20 +61,15 @@ def lm_input_function(n_devices):
 
     for i in range(n_devices*batch_size):
       article, summary = loader.load_random_question()
-      article_enc = TOKENIZER.EncodeAsIds(article)
-      summary_enc = TOKENIZER.EncodeAsIds(summary)
-      x = article_enc + [0] + summary_enc
-      padding = create_padding(x)
-      values.append(np.concatenate((x, padding)))
+      article_enc = TOKENIZER.EncodeAsIds(article) + [1]
+      summary_enc = TOKENIZER.EncodeAsIds(summary) + [1]
+      combination = article_enc + [0] + summary_enc
+      padding = create_padding(combination)
+      values.append(np.concatenate((combination, padding)))
       mask.append(np.concatenate((np.zeros_like(article_enc), [0], np.ones_like(summary_enc), np.zeros_like(padding))))
 
     values = np.array(values)
     mask = np.array(mask)
     yield (values, values, mask)
 
-
 loader = Loader()
-#loader.load_data_from_tf()
-#loader.write_to_file()
-#loader.load_file()
-#loader.convert_to_textfile()
