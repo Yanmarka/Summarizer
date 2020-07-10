@@ -22,6 +22,8 @@ def moving_average(numbers, window_size=3):
     return moving_averages
 
 if __name__ == '__main__':
-    x = moving_average(accuracy_graph("./log.txt"))
-    plt.plot(x)
+    plot_paths = ["./logs/tfdata_log_2.txt", "./logs/tfdata_log_3.txt"]
+    plot_data =  [moving_average(accuracy_graph(x)) for x in plot_paths]
+    for element in plot_data:
+        plt.plot(element)
     plt.show()
