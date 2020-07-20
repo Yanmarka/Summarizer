@@ -19,12 +19,15 @@ class Loader():
         test_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
     self.data = {'train': train_data, 'test': test_data}
 
-  def write_to_file(self):  
-      with open('cnn_dailymail.txt', 'w') as f:
-          f.write(json.dumps(self.data))
+  def write_to_file(self, path='cnn_dailymail.txt', subset='all'):
+      with open(path, 'w') as f:
+          if subset=='all':
+            f.write(json.dumps(self.data))
+          else:
+            f.write(json.dumps(self.data[subset]))
 
-  def load_file(self):  
-      with open('cnn_dailymail.txt', 'r') as f:
+  def load_file(self, path='cnn_dailymail.txt'):  
+      with open(path, 'r') as f:
           data = json.loads(f.read())
           self.data = data
 
@@ -40,3 +43,32 @@ class Loader():
         for example in training_data[:subset_length]:
             f.write(example['article'])
             f.write(example['highlights'])
+  
+  def remove_long_examples(self, length=2045, ds='train'):
+    filter_list = []
+    for example in self.data[ds]:
+      if len(example['article']) + len(example['highlights']) > length:
+        filter_list.append(False)
+      else:
+        filter_list.append(True)
+    data_array = np.array(self.data[ds])
+    filtered_array = data_array[np.array(filter_list)]
+    self.data[ds] = filtered_array.tolist()
+
+  def shorten_long_examples(self, length=2045, ds='train'):
+    ds_copy = []
+    for example in self.data[ds]:
+      if len(example['article']) + len(example['highlights']) > length:
+        difference = (len(example['article']) + len(example['highlights'])) - length
+        ds_copy.append({'article': example['article'][difference:], 'highlights': example['highlights']}) 
+      else:
+        ds_copy.append(example)
+    self.data[ds] = ds_copy
+
+  def write_ids(self, TOKENIZER=None):
+    enc_dict = {'train':[], 'test':[]}
+    for example in self.data['train']:
+      enc_dict['train'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
+    for example in self.data['test']:
+      enc_dict['test'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
+    self.data = enc_dict
