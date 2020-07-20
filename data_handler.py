@@ -9,15 +9,19 @@ class Loader():
       self.data = {}
 
   def load_data_from_tf(self):
-    ds_train = tfds.load('cnn_dailymail', split='train')
-    ds_test = tfds.load('cnn_dailymail', split='test')
+    ds_train = tfds.load('cnn_dailymail:3.0.0', split='train', shuffle_files=True)
+    ds_test = tfds.load('cnn_dailymail:3.0.0', split='test', shuffle_files=True)
+    ds_validation = tfds.load('cnn_dailymail:3.0.0', split='validation', shuffle_files=True)
     train_data = []
     test_data = []
+    validation_data = []
     for example in tfds.as_numpy(ds_train):
         train_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
     for example in tfds.as_numpy(ds_test):
         test_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
-    self.data = {'train': train_data, 'test': test_data}
+    for example in tfds.as_numpy(ds_validation):
+      validation_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+    self.data = {'train': train_data, 'test': test_data, 'validation': validation_data}
 
   def write_to_file(self, path='cnn_dailymail.txt', subset='all'):
       with open(path, 'w') as f:
