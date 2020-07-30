@@ -3,7 +3,7 @@ import numpy as np
 import data_handler
 
 TOKENIZER = SentencePieceProcessor()
-TOKENIZER.load('vocab.model')
+TOKENIZER.load('cnnd16k.model')
 
 loader = data_handler.Loader()
 loader.load_file()
