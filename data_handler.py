@@ -63,6 +63,9 @@ class Loader():
     ds_copy = []
     for example in self.data[ds]:
       if len(example['article']) + len(example['highlights']) > length:
+        if len(example['highlights']) > length:
+          print("Removed outlier where summary larger than limit") #There is one outlier where this happens
+          continue
         difference = (len(example['article']) + len(example['highlights'])) - length
         ds_copy.append({'article': example['article'][difference:], 'highlights': example['highlights']}) 
       else:
@@ -70,9 +73,11 @@ class Loader():
     self.data[ds] = ds_copy
 
   def write_ids(self, TOKENIZER=None):
-    enc_dict = {'train':[], 'test':[]}
+    enc_dict = {'train':[], 'test':[], 'validation': []}
     for example in self.data['train']:
       enc_dict['train'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
     for example in self.data['test']:
       enc_dict['test'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
+    for example in self.data['validation']:
+      enc_dict['validation'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
     self.data = enc_dict
