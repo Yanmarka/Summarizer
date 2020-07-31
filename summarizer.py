@@ -30,21 +30,4 @@ def lm_input_function(n_devices):
 
     values = np.array(values)
     mask = np.array(mask)
-    yield (values, values, mask)
-
-def rouge_score(generated_summary, reference_summary):
-  generated_summary = generated_summary.split()
-  reference_summary = reference_summary.split()
-  i = 0
-  for unigram in generated_summary:
-    if unigram in reference_summary:
-      i += 1
-  return i
-
-def evaluate_rouge():
-  score = 0
-  for i, element in enumerate(loader.data['test']):
-    feature = TOKENIZER.EncodeAsIds(padd(element['article']))
-    prediction = predict(feature)
-    score += rouge_score(prediction, element['highlights'])
-  return score / (i + 1)
+    yield (values, values, mask
