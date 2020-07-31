@@ -1,6 +1,7 @@
 from sentencepiece import SentencePieceProcessor
 import numpy as np
 import data_handler
+import trax
 
 TOKENIZER = SentencePieceProcessor()
 TOKENIZER.load('cnnd16k.model')
@@ -30,4 +31,23 @@ def lm_input_function(n_devices):
 
     values = np.array(values)
     mask = np.array(mask)
-    yield (values, values, mask
+    yield (values, values, mask)
+
+def my_transformer_lm(mode):
+  return trax.models.TransformerLM(vocab_size=16000, max_len=2048, d_model=1024, d_ff=4096, n_layers=3, mode=mode)
+
+def my_reformer_lm(mode):
+  return trax.models.ReformerLM(vocab_size=16000, max_len=2048, d_model=1024, d_ff=4096, n_layers=3, mode=mode, ff_activation=trax.layers.Relu, attention_type=trax.layers.LSHSelfAttention)
+
+def my_reformer_no_lsh(mode):
+  return trax.models.ReformerLM(vocab_size=16000, max_len=2048, d_model=1024, d_ff=4096, n_layers=3, mode=mode, ff_activation=trax.layers.Relu)
+
+def create_trainer(model, inputs, output_dir):
+  trainer = trax.supervised.Trainer(
+      model=model,
+      loss_fn=trax.layers.CrossEntropyLoss(),
+      optimizer=trax.optimizers.Adafactor,
+      lr_schedule=trax.lr.MultifactorSchedule,
+      inputs=inputs,
+      output_dir=output_dir)
+  return trainer
