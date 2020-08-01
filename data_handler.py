@@ -7,6 +7,7 @@ import numpy as np
 class Loader():
   def __init__(self):
       self.data = {}
+      self.question_index = 0
 
   def load_data_from_tf(self):
     ds_train = tfds.load('cnn_dailymail:3.0.0', split='train', shuffle_files=True)
@@ -34,6 +35,13 @@ class Loader():
       with open(path, 'r') as f:
           data = json.loads(f.read())
           self.data = data
+
+  def load_next_question(self, ds='train'):
+    article, summary = self.data[ds][self.question_index]['article'], self.data[ds][self.question_index]['highlights']
+    self.question_index += 1
+    if self.question_index >= len(self.data[ds]):
+      self.question_index = 0
+    return article, summary
 
   def load_random_question(self, ds='train'):
     number = np.random.randint(0, len(self.data[ds])) #TODO Should it be -1?
