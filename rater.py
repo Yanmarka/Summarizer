@@ -17,7 +17,7 @@ def compute_rouge(path="testing_results.txt"):
         testing_results = json.load(f)
 
     for i, element in enumerate(testing_results):
-        scores = rouge.get_scores(element['hypothesis'], TOKENIZER.DecodeIds(element['reference']))
+        scores = rouge.get_scores(TOKENIZER.DecodeIds(element['hypothesis']), TOKENIZER.DecodeIds(element['reference']))
         fscore += scores[0]["rouge-1"]["f"]
         precision += scores[0]["rouge-1"]["p"]
         recak += scores[0]["rouge-1"]["r"]
@@ -30,3 +30,5 @@ def compute_rouge(path="testing_results.txt"):
     print("Precision: " + str(precision))
     print("Recall: "+ str(recall))
 
+if __name__ == "__main__":
+    compute_rouge()
