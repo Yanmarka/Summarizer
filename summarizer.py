@@ -2,32 +2,39 @@ from sentencepiece import SentencePieceProcessor
 import numpy as np
 import data_handler
 import trax
+import json
 
-TOKENIZER = SentencePieceProcessor()
-TOKENIZER.load('cnnd16k.model')
+tokenizer = SentencePieceProcessor()
+tokenizer.Load('cnnd16k.model')
 
 loader = data_handler.Loader()
-loader.load_file()
+loader.load_file('cnn_dailymail_v11.txt')
 
-def create_padding(text, amount=4096):
+def create_padding(text, amount=2048):
   if len(text) < amount:
     shape = amount-len(text)
-    return np.zeros(shape, dtype=int)
+    padding = np.zeros(shape, dtype=int)
+    return np.concatenate((text, padding)), padding, True
+  else:
+    return np.array(text), None, False
 
 def lm_input_function(n_devices):
-  batch_size = 1
+  batch_size = 8
   while True:
     values = []
     mask = []
 
     for i in range(n_devices*batch_size):
-      article, summary = loader.load_random_question()
-      article_enc = TOKENIZER.EncodeAsIds(article) + [1]
-      summary_enc = TOKENIZER.EncodeAsIds(summary) + [1]
-      combination = article_enc + [0] + summary_enc
-      padding = create_padding(combination)
-      values.append(np.concatenate((combination, padding)))
-      mask.append(np.concatenate((np.zeros_like(article_enc), [0], np.ones_like(summary_enc), np.zeros_like(padding))))
+      article, summary = loader.load_next_question()
+      article = article + [1]
+      summary = summary + [1]
+      combination = article + [0] + summary
+      padded_text, padding, is_padded = create_padding(combination)
+      values.append(padded_text)
+      if is_padded == True:
+        mask.append(np.concatenate((np.zeros_like(article), [0], np.ones_like(summary), np.zeros_like(padding))))
+      else:
+        mask.append(np.concatenate((np.zeros_like(article), [0], np.ones_like(summary))))
 
     values = np.array(values)
     mask = np.array(mask)
