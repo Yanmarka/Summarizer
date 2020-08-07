@@ -18,19 +18,16 @@ def compute_rouge(path="model_output.txt"):
 
     for i, element in enumerate(testing_results):
         scores = scorer.score(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
-        fscore += scores[0]["rouge-1"][0]
-        precision += scores[0]["rouge-1"][1]
-        recall += scores[0]["rouge-1"][2]
-
-
+        precision += scores["rouge1"][0]
+        recall += scores["rouge1"][1]
+        fscore += scores["rouge1"][2]
 
     fscore = fscore / i
     precision = precision / i
     recall = recall / i
 
-    print("FScore: " + str(fscore))
-    print("Precision: " + str(precision))
-    print("Recall: "+ str(recall))
+    return fscore, precision, recall
+
 
 def compute_time(path):
     total = 0
@@ -44,4 +41,4 @@ def compute_time(path):
 
 
 if __name__ == "__main__":
-    compute_rouge()
+    print(compute_rouge())
