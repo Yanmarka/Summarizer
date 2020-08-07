@@ -1,14 +1,14 @@
-from rouge import Rouge 
+from rouge_score import rouge_scorer
 from sentencepiece import SentencePieceProcessor
 import json
 
-rouge = Rouge()
 
 model = "cnnd16k.model"
 TOKENIZER = SentencePieceProcessor()
 TOKENIZER.load(model)
 
 def compute_rouge(path="model_output.txt"):
+    scorer = rouge_scorer.RougeScorer(['rouge1'])
     fscore = 0
     precision = 0
     recall = 0
@@ -17,13 +17,11 @@ def compute_rouge(path="model_output.txt"):
         testing_results = json.load(f)
 
     for i, element in enumerate(testing_results):
-        try:
-            scores = rouge.get_scores(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
-            fscore += scores[0]["rouge-1"]["f"]
-            precision += scores[0]["rouge-1"]["p"]
-            recall += scores[0]["rouge-1"]["r"]
-        except RecursionError:
-            print("Error")
+        scores = scorer.score(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
+        fscore += scores[0]["rouge-1"][0]
+        precision += scores[0]["rouge-1"][1]
+        recall += scores[0]["rouge-1"][2]
+
 
 
     fscore = fscore / i
