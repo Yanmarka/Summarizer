@@ -4,11 +4,6 @@ import data_handler
 import trax
 import json
 
-tokenizer = SentencePieceProcessor()
-tokenizer.Load('cnnd16k.model')
-
-loader = data_handler.Loader()
-loader.load_file('cnn_dailymail_v11.txt')
 
 def create_padding(text, amount=2048):
   if len(text) < amount:
