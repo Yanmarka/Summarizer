@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 
-def accuracy_graph(path, start=3):
+base_path = "/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/"
+configs = ["C1T1", "C1T2", "C1T3", "C1R1", "C1R2", "C1R3"]
+c1_data = []
+for element in configs:
+    c1_data.append(base_path + element + "/log.txt")
+
+def accuracy_graph(path, start=2):
     f = open(path)
     text = f.readlines()
     text = text[start:]
@@ -21,9 +27,15 @@ def moving_average(numbers, window_size=3):
         i += 1
     return moving_averages
 
-if __name__ == '__main__':
-    plot_paths = ["./logs/tfdata_log_2.txt", "./logs/tfdata_log_3.txt"]
-    plot_data =  [moving_average(accuracy_graph(x)) for x in plot_paths]
-    for element in plot_data:
-        plt.plot(element)
+def plot_graph(paths, colors=None):
+    plot_data =  [moving_average(accuracy_graph(path)) for path in paths]
+    if colors != None:
+        for i, element in enumerate(plot_data):
+            plt.plot(element, colors[i])
+    else:
+        for element in plot_data:
+            plt.plot(element)
     plt.show()
+
+if __name__ == '__main__':
+    plot_graph(c1_data, ['#0000FF', '#00FFFF', '#1569C7', '#FF0000', '#DC143C', '#ff0081'])
