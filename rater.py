@@ -1,6 +1,7 @@
 from rouge_score import rouge_scorer
 from sentencepiece import SentencePieceProcessor
 import json
+import numpy as np
 
 
 model = "cnnd16k.model"
@@ -26,8 +27,25 @@ def compute_rouge(path="model_output.txt"):
     precision = precision / i
     recall = recall / i
 
-    return fscore, precision, recall
+    return recall, precision, fscore
 
+def compute_rouge_data(path="model_output.txt"):
+    scorer = rouge_scorer.RougeScorer(['rouge1'])
+    fscore = []
+    precision = []
+    recall = []
+
+    with open(path, "r") as f:
+        testing_results = json.load(f)
+
+    for i, element in enumerate(testing_results):
+        scores = scorer.score(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
+        precision.append(scores["rouge1"][0])
+        recall.append(scores["rouge1"][1])
+        fscore.append(scores["rouge1"][2])
+
+    return {'Max': {'Recall': (max(recall), np.argmax(recall)), 'Precision': (max(precision), np.argmax(precision)), 'Fscore': (max(fscore), np.argmax(fscore))}, 
+            'Min': {'Recall': (min(recall), np.argmin(recall)), 'Precision': (min(precision), np.argmin(precision)), 'Fscore': (min(fscore), np.argmin(fscore))}}
 
 def compute_time(path):
     total = 0
@@ -41,4 +59,4 @@ def compute_time(path):
 
 
 if __name__ == "__main__":
-    print(compute_rouge())
+    print(compute_rouge_data("/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/C1T2/model_output_val_5k.txt"))
