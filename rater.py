@@ -8,8 +8,8 @@ model = "cnnd16k.model"
 TOKENIZER = SentencePieceProcessor()
 TOKENIZER.load(model)
 
-def compute_rouge(path="model_output.txt"):
-    scorer = rouge_scorer.RougeScorer(['rouge1'])
+def compute_rouge(path="model_output.txt", scoring="rouge1"):
+    scorer = rouge_scorer.RougeScorer([scoring])
     fscore = 0
     precision = 0
     recall = 0
@@ -19,9 +19,9 @@ def compute_rouge(path="model_output.txt"):
 
     for i, element in enumerate(testing_results):
         scores = scorer.score(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
-        precision += scores["rouge1"][0]
-        recall += scores["rouge1"][1]
-        fscore += scores["rouge1"][2]
+        precision += scores[scoring][0]
+        recall += scores[scoring][1]
+        fscore += scores[scoring][2]
 
     fscore = fscore / i
     precision = precision / i
@@ -29,8 +29,8 @@ def compute_rouge(path="model_output.txt"):
 
     return recall, precision, fscore
 
-def compute_rouge_data(path="model_output.txt"):
-    scorer = rouge_scorer.RougeScorer(['rouge1'])
+def compute_rouge_data(path="model_output.txt", scoring="rouge1"):
+    scorer = rouge_scorer.RougeScorer([scoring])
     fscore = []
     precision = []
     recall = []
@@ -40,9 +40,9 @@ def compute_rouge_data(path="model_output.txt"):
 
     for i, element in enumerate(testing_results):
         scores = scorer.score(TOKENIZER.DecodeIds(element['prediction']), TOKENIZER.DecodeIds(element['reference']))
-        precision.append(scores["rouge1"][0])
-        recall.append(scores["rouge1"][1])
-        fscore.append(scores["rouge1"][2])
+        precision.append(scores[scoring][0])
+        recall.append(scores[scoring][1])
+        fscore.append(scores[scoring][2])
 
     return {'Max': {'Recall': (max(recall), np.argmax(recall)), 'Precision': (max(precision), np.argmax(precision)), 'Fscore': (max(fscore), np.argmax(fscore))}, 
             'Min': {'Recall': (min(recall), np.argmin(recall)), 'Precision': (min(precision), np.argmin(precision)), 'Fscore': (min(fscore), np.argmin(fscore))}}
@@ -67,4 +67,4 @@ def merge_files(file1, file2, output_file):
 
 
 if __name__ == "__main__":
-    compute_rouge()
+    print(compute_rouge())
