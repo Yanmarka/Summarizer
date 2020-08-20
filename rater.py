@@ -57,6 +57,14 @@ def compute_time(path):
                 k += 1
     return total / k
 
+def merge_files(file1, file2, output_file):
+    f1 = open(file1, 'r')
+    f2 = open(file2, 'r')
+    of = open(output_file, 'w')
+
+    data = json.loads(f1.read()) + json.loads(f2.read())
+    of.write(json.dumps(data))
+
 
 if __name__ == "__main__":
-    print(compute_rouge_data("/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/C1T2/model_output_val_5k.txt"))
+    compute_rouge()
