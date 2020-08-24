@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 base_path = "/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/"
 configs = ["C1T1", "C1T2", "C1T3", "C1R1", "C1R2", "C1R3"]
@@ -35,6 +36,21 @@ def plot_graph(paths, colors=None):
     else:
         for element in plot_data:
             plt.plot(element)
+    plt.show()
+
+def plot_scores(scores):
+    for i, score in enumerate(scores):
+        plt.plot(i, score['f'], 'bo')
+        plt.plot(i, score['r'], 'ro')
+        plt.plot(i, score['p'], 'go')
+
+    plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ["T1", "R1", "T2", "R2", "T3", "R3", "T4", "R4"])
+
+    red_patch = mpatches.Patch(color='red', label='Recall')
+    blue_patch = mpatches.Patch(color='blue', label='F-Score')
+    green_patch = mpatches.Patch(color='green', label='Precision')
+    plt.legend(handles=[blue_patch, red_patch, green_patch])
+
     plt.show()
 
 if __name__ == '__main__':
