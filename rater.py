@@ -3,7 +3,6 @@ from sentencepiece import SentencePieceProcessor
 import json
 import numpy as np
 
-
 model = "cnnd16k.model"
 TOKENIZER = SentencePieceProcessor()
 TOKENIZER.load(model)
@@ -27,7 +26,7 @@ def compute_rouge(path="model_output.txt", scoring="rouge1"):
     precision = precision / i
     recall = recall / i
 
-    return recall, precision, fscore
+    return {'f': fscore, 'r': recall, 'p': precision}
 
 def compute_rouge_data(path="model_output.txt", scoring="rouge1"):
     scorer = rouge_scorer.RougeScorer([scoring])
@@ -46,6 +45,22 @@ def compute_rouge_data(path="model_output.txt", scoring="rouge1"):
 
     return {'Max': {'Recall': (max(recall), np.argmax(recall)), 'Precision': (max(precision), np.argmax(precision)), 'Fscore': (max(fscore), np.argmax(fscore))}, 
             'Min': {'Recall': (min(recall), np.argmin(recall)), 'Precision': (min(precision), np.argmin(precision)), 'Fscore': (min(fscore), np.argmin(fscore))}}
+
+def compute_full_rouge(paths, names=None, print_data=False):
+    if names == None:
+        names = paths
+    score_dict = {}
+
+    for path, name in zip(paths, names):
+        score_dict[name] = {}
+        for scoring in ["rouge1", "rouge2", "rougeL"]:
+            score_dict[name][scoring] = compute_rouge(path, scoring)
+
+    if print_data == False:
+        with open("rouge_scores.txt", "w") as f:
+            f.write(json.dumps(score_dict))
+    else:
+        print(score_dict)
 
 def compute_time(path):
     total = 0
