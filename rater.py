@@ -46,7 +46,7 @@ def compute_rouge_data(path="model_output.txt", scoring="rouge1"):
     return {'Max': {'Recall': (max(recall), np.argmax(recall)), 'Precision': (max(precision), np.argmax(precision)), 'Fscore': (max(fscore), np.argmax(fscore))}, 
             'Min': {'Recall': (min(recall), np.argmin(recall)), 'Precision': (min(precision), np.argmin(precision)), 'Fscore': (min(fscore), np.argmin(fscore))}}
 
-def compute_full_rouge(paths, names=None, print_data=False):
+def compute_full_rouge(paths, names=None):
     if names == None:
         names = paths
     score_dict = {}
@@ -56,11 +56,8 @@ def compute_full_rouge(paths, names=None, print_data=False):
         for scoring in ["rouge1", "rouge2", "rougeL"]:
             score_dict[name][scoring] = compute_rouge(path, scoring)
 
-    if print_data == False:
-        with open("rouge_scores.txt", "w") as f:
-            f.write(json.dumps(score_dict))
-    else:
-        print(score_dict)
+
+    return score_dict
 
 def compute_time(path):
     total = 0
