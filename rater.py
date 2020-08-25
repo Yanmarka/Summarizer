@@ -59,6 +59,17 @@ def compute_full_rouge(paths, names=None):
 
     return score_dict
 
+def compute_mean(score_dict):
+    mean_dict = {"rouge1": {}, "rouge2": {}, "rougeL":{}}
+    for scoring in ["rouge1", "rouge2", "rougeL"]:
+        f, r, p = [], [], []
+        for model in score_dict:
+            f.append(score_dict[model][scoring]['f'])
+            r.append(score_dict[model][scoring]['r'])
+            p.append(score_dict[model][scoring]['p'])
+        mean_dict[scoring].update({'f': np.mean(f), 'r': np.mean(r), 'p': np.mean(p)}) 
+    return mean_dict
+
 def compute_time(path):
     total = 0
     k = 0
