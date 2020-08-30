@@ -1,0 +1,9 @@
+jaxlib -e --upgrade 'https://storage.googleapis.com/jax-releases'/cuda100/jaxlib-0.1.52-cp37-none-manylinux2010_x86_64.whl
+jax==0.1.75
+tensorflow==2.2
+tensorflow-metadata==0.22.2
+trax==1.2.4
+sentencepiece==0.1.91
+numpy==1.19.0
+scipy==1.4.1
+wrapt==1.11.2
