@@ -3,6 +3,7 @@ import math
 import random
 import tensorflow_datasets as tfds
 import numpy as np
+import re
 
 class Loader():
   def __init__(self):
@@ -88,3 +89,36 @@ class Loader():
     for example in self.data['validation']:
       enc_dict['validation'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
     self.data = enc_dict
+
+class Preprocessor():
+  def rewrite_input(self, path="input.txt"):
+    output_path = "split_" + path 
+    with open(path, "r") as f:
+        text = f.read()
+    text = re.split(r'([\.\?\!])', text)
+    text = [x+y for x,y in zip(text[0::2], text[1::2])]
+
+    with open(output_path, "w") as f:
+        for sentence in text:
+            f.write("%s\n" % sentence)
+
+  def rewrite_vocab(self, path="vocab.vocab"):
+      with open(path, "r") as f:
+          text = f.readlines()
+          cleaned_text = []
+          for element in text:
+              cleaned_text.append(re.split(r'\t+', element)[0])
+
+      with open(self, "model.vocab", "w") as f:
+          i = 0
+          for element in cleaned_text:
+              f.write(element + "\t" + str(i) + "\n")
+              i += 1
+
+  def write_sentencepiece_input_file(self, data, path="sentencepiece_input.txt"):
+      with open(path, 'w') as f:
+        for subset in data:
+          for document in data[subset]:
+            for section in ['article', 'highlights']:
+              for line in document[section].splitlines():
+                f.write(line + '\n')
