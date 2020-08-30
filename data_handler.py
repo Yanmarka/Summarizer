@@ -7,7 +7,6 @@ import numpy as np
 class Loader():
   def __init__(self):
       self.data = {}
-<<<<<<< HEAD
       self.question_index = {'train': 0, 'validation': 0, 'test': 0,}
 
   def load_data_from_tf(self, dataset='cnn_dailymail:3.0.0', long_text='article', short_text='highlights'):
@@ -15,9 +14,6 @@ class Loader():
     ds_test = tfds.load(dataset, split='test', shuffle_files=True)
     ds_validation = tfds.load(dataset, split='validation', shuffle_files=True)
     train_data, test_data, validation_data = [], [], []
-=======
-      self.question_index = 0
->>>>>>> 8897d9f798d7bbbef2304a8a1b8e4d41dec0a308
 
     for example in tfds.as_numpy(ds_train):
         train_data.append({'article':example[long_text].decode('utf-8'), 'highlights':example[short_text].decode('utf-8')})
