@@ -3,25 +3,25 @@ import math
 import random
 import tensorflow_datasets as tfds
 import numpy as np
+import re
 
 class Loader():
   def __init__(self):
       self.data = {}
-      self.question_index = 0
+      self.question_index = {'train': 0, 'validation': 0, 'test': 0,}
 
-  def load_data_from_tf(self):
-    ds_train = tfds.load('cnn_dailymail:3.0.0', split='train', shuffle_files=True)
-    ds_test = tfds.load('cnn_dailymail:3.0.0', split='test', shuffle_files=True)
-    ds_validation = tfds.load('cnn_dailymail:3.0.0', split='validation', shuffle_files=True)
-    train_data = []
-    test_data = []
-    validation_data = []
+  def load_data_from_tf(self, dataset='cnn_dailymail:3.0.0', long_text='article', short_text='highlights'):
+    ds_train = tfds.load(dataset, split='train', shuffle_files=True)
+    ds_test = tfds.load(dataset, split='test', shuffle_files=True)
+    ds_validation = tfds.load(dataset, split='validation', shuffle_files=True)
+    train_data, test_data, validation_data = [], [], []
+
     for example in tfds.as_numpy(ds_train):
-        train_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+        train_data.append({'article':example[long_text].decode('utf-8'), 'highlights':example[short_text].decode('utf-8')})
     for example in tfds.as_numpy(ds_test):
-        test_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+        test_data.append({'article':example[long_text].decode('utf-8'), 'highlights':example[short_text].decode('utf-8')})
     for example in tfds.as_numpy(ds_validation):
-      validation_data.append({'article':example['article'].decode('utf-8'), 'highlights':example['highlights'].decode('utf-8')})
+      validation_data.append({'article':example[long_text].decode('utf-8'), 'highlights':example[short_text].decode('utf-8')})
     self.data = {'train': train_data, 'test': test_data, 'validation': validation_data}
 
   def write_to_file(self, path='cnn_dailymail.txt', subset='all'):
@@ -37,10 +37,10 @@ class Loader():
           self.data = data
 
   def load_next_question(self, ds='train'):
-    article, summary = self.data[ds][self.question_index]['article'], self.data[ds][self.question_index]['highlights']
-    self.question_index += 1
-    if self.question_index >= len(self.data[ds]):
-      self.question_index = 0
+    article, summary = self.data[ds][self.question_index[ds]]['article'], self.data[ds][self.question_index[ds]]['highlights']
+    self.question_index[ds] += 1
+    if self.question_index[ds] >= len(self.data[ds]):
+      self.question_index[ds] = 0
     return article, summary
 
   def load_random_question(self, ds='train'):
@@ -89,3 +89,36 @@ class Loader():
     for example in self.data['validation']:
       enc_dict['validation'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
     self.data = enc_dict
+
+class Preprocessor():
+  def rewrite_input(self, path="input.txt"):
+    output_path = "split_" + path 
+    with open(path, "r") as f:
+        text = f.read()
+    text = re.split(r'([\.\?\!])', text)
+    text = [x+y for x,y in zip(text[0::2], text[1::2])]
+
+    with open(output_path, "w") as f:
+        for sentence in text:
+            f.write("%s\n" % sentence)
+
+  def rewrite_vocab(self, path="vocab.vocab"):
+      with open(path, "r") as f:
+          text = f.readlines()
+          cleaned_text = []
+          for element in text:
+              cleaned_text.append(re.split(r'\t+', element)[0])
+
+      with open(self, "model.vocab", "w") as f:
+          i = 0
+          for element in cleaned_text:
+              f.write(element + "\t" + str(i) + "\n")
+              i += 1
+
+  def write_sentencepiece_input_file(self, data, path="sentencepiece_input.txt"):
+      with open(path, 'w') as f:
+        for subset in data:
+          for document in data[subset]:
+            for section in ['article', 'highlights']:
+              for line in document[section].splitlines():
+                f.write(line + '\n')
