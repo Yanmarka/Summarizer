@@ -1,4 +1,4 @@
 import decode_helperfile
+import configurations
 
-decode_helperfile.main("modelc1t350k.pkl")
-decode_helperfile.main("modelc1t250k.pkl", stop=2500)
+decode_helperfile.main()
