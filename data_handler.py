@@ -80,14 +80,22 @@ class Loader():
         ds_copy.append(example)
     self.data[ds] = ds_copy
 
-  def write_ids(self, TOKENIZER=None):
+  def write_ids(self, text, TOKENIZER=None, print_progress=False):
+    ids = []
+    for i, example in enumerate(text):
+      ids.append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
+
+      if print_progress and i % 1000 == 0:
+        print("Completed " + str(i) + " of " + str(len(text)) + " samples.") 
+
+    return ids
+
+  def full_id_conversion(self, tokenizer):
     enc_dict = {'train':[], 'test':[], 'validation': []}
-    for example in self.data['train']:
-      enc_dict['train'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
-    for example in self.data['test']:
-      enc_dict['test'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
-    for example in self.data['validation']:
-      enc_dict['validation'].append({'article': TOKENIZER.EncodeAsIds(example['article']), 'highlights': TOKENIZER.EncodeAsIds(example['highlights'])})
+    enc_dict['train'] = self.write_ids(self.data['train'], tokenizer)
+    enc_dict['test'] = self.write_ids(self.data['test'], tokenizer)
+    enc_dict['validation'] = self.write_ids(self.data['validation'], tokenizer)
+
     self.data = enc_dict
 
 class Preprocessor():
