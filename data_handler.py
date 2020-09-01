@@ -92,9 +92,9 @@ class Loader():
 
   def full_id_conversion(self, tokenizer):
     enc_dict = {'train':[], 'test':[], 'validation': []}
-    enc_dict['train'] = self.write_ids(self.data['train'], tokenizer)
-    enc_dict['test'] = self.write_ids(self.data['test'], tokenizer)
-    enc_dict['validation'] = self.write_ids(self.data['validation'], tokenizer)
+    enc_dict['train'] = self.write_ids(self.data['train'], tokenizer, True)
+    enc_dict['test'] = self.write_ids(self.data['test'], tokenizer, True)
+    enc_dict['validation'] = self.write_ids(self.data['validation'], tokenizer, True)
 
     self.data = enc_dict
 
