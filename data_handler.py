@@ -130,3 +130,27 @@ class Preprocessor():
             for section in ['article', 'highlights']:
               for line in document[section].splitlines():
                 f.write(line + '\n')
+
+def load_scientific_papers_data():
+  pubmed_loader = Loader()
+  pubmed_loader.load_data_from_tf(dataset="scientific_papers/pubmed:1.1.1", short_text='abstract')
+  arxiv_loader = Loader()
+  arxiv_loader.load_data_from_tf(dataset="scientific_papers/arxiv:1.1.1", short_text='abstract')
+
+  merged_dictionary =  {**arxiv_loader.data, **pubmed_loader.data}
+  first_half = {}
+  second_half = {}
+
+  first_half['train'] = merged_dictionary['train'][math.floor(len(merged_dictionary['train'])/2):] 
+  second_half['train'] = merged_dictionary['train'][:math.floor(len(merged_dictionary['train'])/2)]
+  first_half['test'] = merged_dictionary['test']
+  second_half['test'] = merged_dictionary['test']
+  first_half['validation'] = merged_dictionary['validation']
+  second_half['validation'] = merged_dictionary['validation']
+
+  loader = Loader()
+  loader.data = first_half
+  loader.write_to_file("scientific_papers_text_one.txt")
+
+  loader.data = second_half
+  loader.write_to_file("scientific_papers_text_two.txt")
