@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import data_handler
 
 base_path = "/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/"
-configs = ["C2T1", "C2T2", "C2T3", "C2R1", "C2R2", "C2R3"] #["C1T1", "C1T2", "C1T3", "C1R3"] #"C1R1", "C1R2", "C1R3"]
+configs = ["C1T1", "C1T2", "C1T3", "C1R1", "C1R2", "C1R3"]
 c1_data = []
 for element in configs:
     c1_data.append(base_path + element + "/log.txt")
@@ -53,6 +54,13 @@ def plot_scores(scores):
     green_patch = mpatches.Patch(color='green', label='Precision')
     plt.legend(handles=[blue_patch, red_patch, green_patch])
 
+    plt.show()
+
+def plot_dataset(dataset):
+    length_list = []
+    for element in dataset:
+        length_list.append(len(element))
+    plt.boxplot(length_list)
     plt.show()
 
 if __name__ == '__main__':
