@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 base_path = "/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/"
-configs = ["C1T1", "C1T2", "C1T3", "C1R1", "C1R2", "C1R3"]
+configs = ["C2T1", "C2T2", "C2T3", "C2R1", "C2R2", "C2R3"] #["C1T1", "C1T2", "C1T3", "C1R3"] #"C1R1", "C1R2", "C1R3"]
 c1_data = []
 for element in configs:
     c1_data.append(base_path + element + "/log.txt")
 
-def accuracy_graph(path, start=2):
+def accuracy_graph(path, start=3):
     f = open(path)
     text = f.readlines()
     text = text[start:]
@@ -36,6 +36,8 @@ def plot_graph(paths, colors=None):
     else:
         for element in plot_data:
             plt.plot(element)
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
     plt.show()
 
 def plot_scores(scores):
