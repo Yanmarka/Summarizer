@@ -25,3 +25,8 @@ def main(model_name, model, start=-1, stop=None, dataset='cnn_dailymail_v11_vali
 
         if i == stop:
             break
+    
+    f = open(path, "w")
+    f.write(json.dumps(result_list))
+    f.close()
+    print("Ran complete dataset for model " + model_name + ". Done!")
