@@ -137,13 +137,13 @@ def load_scientific_papers_data():
   arxiv_loader = Loader()
   arxiv_loader.load_data_from_tf(dataset="scientific_papers/arxiv:1.1.1", short_text='abstract')
 
-  merged_dictionary =  {**arxiv_loader.data, **pubmed_loader.data}
-  random.shuffle(merged_dictionary['train'])
+  merged_training_data =  arxiv_loader.data['train']+  pubmed_loader.data['train']
+  random.shuffle(merged_training_data)
   first_half = {}
   second_half = {}
 
-  first_half['train'] = merged_dictionary['train'][math.floor(len(merged_dictionary['train'])/2):] 
-  second_half['train'] = merged_dictionary['train'][:math.floor(len(merged_dictionary['train'])/2)]
+  first_half['train'] = merged_training_data[math.floor(len(merged_training_data)/2):] 
+  second_half['train'] = merged_training_data[:math.floor(len(merged_training_data)/2)] 
   first_half['test'] = merged_dictionary['test']
   second_half['test'] = merged_dictionary['test']
   first_half['validation'] = merged_dictionary['validation']
