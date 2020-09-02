@@ -144,10 +144,10 @@ def load_scientific_papers_data():
 
   first_half['train'] = merged_training_data[math.floor(len(merged_training_data)/2):] 
   second_half['train'] = merged_training_data[:math.floor(len(merged_training_data)/2)] 
-  first_half['test'] = merged_dictionary['test']
-  second_half['test'] = merged_dictionary['test']
-  first_half['validation'] = merged_dictionary['validation']
-  second_half['validation'] = merged_dictionary['validation']
+  first_half['test'] = pubmed_loader.data['test']
+  second_half['test'] = arxiv_loader.data['test']
+  first_half['validation'] = pubmed_loader.data['validation']
+  second_half['validation'] = arxiv_loader.data['validation']
 
   loader = Loader()
   loader.data = first_half
