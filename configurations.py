@@ -23,3 +23,6 @@ def c4_transformer(mode):
 
 def c4_reformer(mode):
   return trax.models.ReformerLM(vocab_size=16000, max_len=2048, d_model=1024, d_ff=2048, n_layers=6, mode=mode, ff_activation=trax.layers.Relu)
+
+def lsh_reformer(mode):
+  return trax.models.ReformerLM(vocab_size=16000, max_len=2048, d_model=1024, d_ff=4096, n_layers=3, mode=mode, ff_activation=trax.layers.Relu, attention_type=trax.layers.LSHSelfAttention)
