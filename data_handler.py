@@ -125,7 +125,7 @@ class Preprocessor():
 
   def write_sentencepiece_input_file(self, data, path="sentencepiece_input.txt"):
       with open(path, 'w') as f:
-          for document in data[subset]:
+          for document in data:
             for section in ['article', 'highlights']:
               for line in document[section].splitlines():
                 f.write(line + '\n')
