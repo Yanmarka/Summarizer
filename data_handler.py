@@ -130,6 +130,14 @@ class Preprocessor():
               for line in document[section].splitlines():
                 f.write(line + '\n')
 
+  def record_length(self, data):
+    length = []
+    for element in data:
+      length.append(len(element['article']) + len(element['highlights']))
+
+  def five_numbers_summary(self, data):
+    return np.min(data), np.max(data), np.std(data), np.mean(data), np.median(data)
+
 def load_scientific_papers_data():
   pubmed_loader = Loader()
   pubmed_loader.load_data_from_tf(dataset="scientific_papers/pubmed:1.1.1", short_text='abstract')
