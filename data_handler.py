@@ -134,6 +134,7 @@ class Preprocessor():
     length = []
     for element in data:
       length.append(len(element['article']) + len(element['highlights']))
+    return length
 
   def five_numbers_summary(self, data):
     return np.min(data), np.max(data), np.std(data), np.mean(data), np.median(data)
