@@ -56,11 +56,11 @@ def plot_scores(scores):
 
     plt.show()
 
-def plot_dataset(dataset):
+def plot_dataset(dataset, text='article'):
     length_list = []
     for element in dataset:
-        length_list.append(len(element))
-    plt.boxplot(length_list)
+        length_list.append(len(element[text]))
+    plt.boxplot(length_list, whis=1.4)
     plt.show()
 
 if __name__ == '__main__':
