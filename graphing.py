@@ -39,7 +39,6 @@ def plot_graph(paths, colors=None):
             plt.plot(element)
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    plt.show()
 
 def plot_scores(scores):
     for i, score in enumerate(scores):
@@ -54,8 +53,6 @@ def plot_scores(scores):
     green_patch = mpatches.Patch(color='green', label='Precision')
     plt.legend(handles=[blue_patch, red_patch, green_patch])
 
-    plt.show()
-
 def plot_dataset(length_list, text='article'):
     plt.boxplot(length_list, sym='')
     plt.ylabel("Text length in subword units")
@@ -65,7 +62,7 @@ def plot_dataset(length_list, text='article'):
         bottom=False,      
         top=False,         
         labelbottom=False) 
-    plt.show()
+
 
 if __name__ == '__main__':
     plot_graph(c1_data, ['#0000FF', '#00FFFF', '#1569C7', '#FF0000', '#DC143C', '#ff0081'])
