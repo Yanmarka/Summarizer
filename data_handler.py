@@ -82,7 +82,7 @@ class Loader():
       else:
         ds_copy.append(example)
     self.data[ds] = ds_copy
-    print("Shortened " + (counter / len(ds_copy) * 100 ) + " % of dataset.")
+    print("Shortened " + str(counter / len(ds_copy) * 100 ) + " % of dataset.")
 
   def write_ids(self, text, TOKENIZER=None, print_progress=False):
     ids = []
