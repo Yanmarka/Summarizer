@@ -66,19 +66,23 @@ class Loader():
     data_array = np.array(self.data[ds])
     filtered_array = data_array[np.array(filter_list)]
     self.data[ds] = filtered_array.tolist()
+    print("Percentage of dataset removed: " + str((sum(filter_list) / len(self.data[ds]) * 100)) + " %")
 
   def shorten_long_examples(self, length=2045, ds='train'):
     ds_copy = []
+    counter = 0
     for example in self.data[ds]:
       if len(example['article']) + len(example['highlights']) > length:
         if len(example['highlights']) > length:
           print("Removed outlier where summary larger than limit") #There is one outlier where this happens
           continue
         difference = (len(example['article']) + len(example['highlights'])) - length
-        ds_copy.append({'article': example['article'][difference:], 'highlights': example['highlights']}) 
+        ds_copy.append({'article': example['article'][difference:], 'highlights': example['highlights']})
+        counter += 1
       else:
         ds_copy.append(example)
     self.data[ds] = ds_copy
+    print("Shortened " + (counter / len(ds_copy) * 100 ) + " % of dataset.")
 
   def write_ids(self, text, TOKENIZER=None, print_progress=False):
     ids = []
