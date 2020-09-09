@@ -56,11 +56,15 @@ def plot_scores(scores):
 
     plt.show()
 
-def plot_dataset(dataset, text='article'):
-    length_list = []
-    for element in dataset:
-        length_list.append(len(element[text]))
-    plt.boxplot(length_list, whis=1.4)
+def plot_dataset(length_list, text='article'):
+    plt.boxplot(length_list, sym='')
+    plt.ylabel("Text length in subword units")
+    plt.tick_params(
+        axis='x',          
+        which='both',      
+        bottom=False,      
+        top=False,         
+        labelbottom=False) 
     plt.show()
 
 if __name__ == '__main__':
