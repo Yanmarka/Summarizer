@@ -1,6 +1,6 @@
 from sentencepiece import SentencePieceProcessor
 import numpy as np
-import data_handler
+from data_handler import Loader
 import trax
 import json
 
@@ -44,3 +44,6 @@ def create_trainer(model, inputs, output_dir):
       inputs=inputs,
       output_dir=output_dir)
   return trainer
+
+if __name__ == "__main__":
+    loader = Loader()
