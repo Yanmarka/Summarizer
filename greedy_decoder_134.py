@@ -3,6 +3,7 @@ from data_handler import Loader
 import numpy as np
 import json
 import configurations
+import gin
 
 def create_padding(text, amount=2048):
   if len(text) < amount:
@@ -39,6 +40,11 @@ def run_evaluation(model, ds='validation', output_path="cnn_dailymail_134_output
 if __name__ == "__main__":
     loader = Loader()
     loader.load_file("cnn_dailymail_v11_validation.txt")
+
+    gin.parse_config("""
+    trax.layers.SelfAttention.chunk_len=64
+    """)
+
     my_model =  configurations.c1_reformer(mode='predict')
     my_model.init_from_file("./model.pkl.gz",weights_only=True)
     run_evaluation(my_model, 'validation')
