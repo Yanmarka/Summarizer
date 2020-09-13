@@ -3,7 +3,8 @@ import numpy as np
 from data_handler import Loader
 import trax
 import json
-
+import configurations
+from jax.config import config
 
 def create_padding(text, amount=2048):
   if len(text) < amount:
@@ -46,4 +47,23 @@ def create_trainer(model, inputs, output_dir):
   return trainer
 
 if __name__ == "__main__":
+    FILE_PATH = "cnn_dailymail_v11.txt"
+    OUTPUT_DIR = "./output_dir/"
+    USE_TPU = False
+    TPU_IP_ADRESS = None
+    EPOCHS = 1
+
+    if USE_TPU:
+      backend_target = "grpc://" + "TPU_IP_ADRESS" + ":8470"
+      
+      config.FLAGS.jax_xla_backend = "tpu_driver"
+      config.FLAGS.jax_backend_target = backend_target
+
     loader = Loader()
+    loader.load_file(FILE_PATH)
+
+    model = configurations.lsh_reformer(mode='train')
+    inputs = trax.supervised.inputs.Inputs(lm_input_function)
+    trainer = create_trainer(model, inputs, OUTPUT_DIR)
+    for i in range(EPOCHS):
+      trainer.train_epoch(200,10)
