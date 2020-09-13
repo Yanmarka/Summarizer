@@ -54,7 +54,7 @@ if __name__ == "__main__":
     EPOCHS = 1
 
     if USE_TPU:
-      backend_target = "grpc://" + "TPU_IP_ADRESS" + ":8470"
+      backend_target = "grpc://" + TPU_IP_ADRESS + ":8470"
       
       config.FLAGS.jax_xla_backend = "tpu_driver"
       config.FLAGS.jax_backend_target = backend_target
