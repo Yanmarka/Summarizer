@@ -26,7 +26,7 @@ def generate_output(model, inputs, limit=155):
 
 def run_evaluation(model, ds='validation', output_path="cnn_dailymail_134_output.txt"):
     result_list = []
-    for i, element in enumerate(loader.data['ds']):
+    for i, element in enumerate(loader.data[ds]):
         article = element['article'] + [1]
         article = create_padding(np.array(article), 2048)[0]
         prediction = generate_output(model, article[None, :])
