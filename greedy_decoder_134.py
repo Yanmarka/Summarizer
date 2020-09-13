@@ -38,7 +38,7 @@ def run_evaluation(model, ds='validation', output_path="cnn_dailymail_134_output
 
 if __name__ == "__main__":
     loader = Loader()
-    loader.load_file("cnn_dailymail_v11.txt")
+    loader.load_file("cnn_dailymail_v11_validation.txt")
     my_model =  configurations.c1_reformer(mode='predict')
     my_model.init_from_file("./model.pkl.gz",weights_only=True)
     run_evaluation(my_model, 'validation')
