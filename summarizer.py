@@ -75,11 +75,11 @@ if __name__ == "__main__":
     loader = Loader()
     loader.load_file(FILE_PATH)
 
-    model = configurations.lsh_reformer(mode='train')
+    #model = configurations.lsh_reformer(mode='train')
     summarize_inputs = trax.supervised.inputs.Inputs(train_stream=lm_input_function, eval_stream=lm_input_function_eval)
 
     trainer = trax.supervised.Trainer(
-      model=model,
+      model=configurations.c1_reformer,
       loss_fn=trax.layers.CrossEntropyLoss(),
       optimizer=trax.optimizers.Adafactor,
       lr_schedule=trax.lr.MultifactorSchedule,
