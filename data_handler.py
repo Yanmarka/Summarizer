@@ -9,6 +9,9 @@ class Loader():
   def __init__(self):
       self.data = {}
       self.question_index = {'train': 0, 'validation': 0, 'test': 0,}
+      self.multi_file = False
+      self.file_list = []
+      self.current_file = 0
 
   def load_data_from_tf(self, dataset='cnn_dailymail:3.0.0', long_text='article', short_text='highlights'):
     ds_train = tfds.load(dataset, split='train', shuffle_files=True)
@@ -36,11 +39,23 @@ class Loader():
           data = json.loads(f.read())
           self.data = data
 
+  def index_files(self, paths):
+    self.multi_file = True
+    self.file_list = paths
+    self.load_file(paths[0])
+
   def load_next_question(self, ds='train'):
     article, summary = self.data[ds][self.question_index[ds]]['article'], self.data[ds][self.question_index[ds]]['highlights']
     self.question_index[ds] += 1
     if self.question_index[ds] >= len(self.data[ds]):
-      self.question_index[ds] = 0
+      if self.multi_file:
+        if (self.current_file + 1) == len(self.file_list): self.current_file = 0
+        else: self.current_file += 1
+        self.load_file(self.file_list[self.current_file])
+        for key in self.data.keys():
+          self.question_index[key] = 0
+      else:
+        self.question_index[ds] = 0
     return article, summary
 
   def load_random_question(self, ds='train'):
