@@ -5,6 +5,7 @@ import trax
 import json
 import configurations
 from jax.config import config
+import gin
 
 def create_padding(text, amount=2048):
   if len(text) < amount:
@@ -58,12 +59,18 @@ def lm_input_function_eval(n_devices):
     mask = np.array(mask)
     yield (values, values, mask)
 
+def configure_lsh(n_hashes):
+  config_list = ["trax.layers.LSHSelfAttention.n_hashes = " + str(n_hashes),
+  "trax.layers.LSHSelfAttention.chunk_len = 64"]
+  gin.parse_config(config_list)
 
 if __name__ == "__main__":
     FILE_PATH = "cnn_dailymail_v11.txt"
     OUTPUT_DIR = "./output_dir/"
     USE_TPU = False
     TPU_IP_ADRESS = None
+    USE_LSH = False
+    LSH_HASHES = 8
     EPOCHS = 1
 
     if USE_TPU:
@@ -71,6 +78,9 @@ if __name__ == "__main__":
       
       config.FLAGS.jax_xla_backend = "tpu_driver"
       config.FLAGS.jax_backend_target = backend_target
+
+    if USE_LSH:
+      configure_lsh(LSH_HASHES)
 
     loader = Loader()
     loader.load_file(FILE_PATH)
