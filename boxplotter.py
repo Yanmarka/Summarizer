@@ -26,10 +26,10 @@ cnn_articles = record_length(loader.data['train'], 'article')
 scientific_paper_summaries = record_length(loader1.data['train'], 'highlights')
 cnn_summaries = record_length(loader.data['train'], 'highlights')
 
-article_plot = sns.boxplot(data=[scientific_paper_articles, cnn_articles])
+article_plot = sns.boxplot(data=[scientific_paper_articles, cnn_articles], showfliers=False)
 article_figure = article_plot.get_figure()
 article_figure.savefig("articles.pdf")
 
-summary_plot = sns.boxplot(data=[scientific_paper_summaries, cnn_summaries])
+summary_plot = sns.boxplot(data=[scientific_paper_summaries, cnn_summaries], showfliers=False)
 summary_figure = summary_plot.get_figure()
 summary_figure.savefig("summaries.pdf")
