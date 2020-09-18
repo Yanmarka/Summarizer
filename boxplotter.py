@@ -1,6 +1,6 @@
 import seaborn as sns
 from data_handler import Loader
-
+import matplotlib.pyplot as plt
 
 def record_length(data, section):
     length = []
@@ -27,9 +27,12 @@ scientific_paper_summaries = record_length(loader1.data['train'], 'highlights')
 cnn_summaries = record_length(loader.data['train'], 'highlights')
 
 article_plot = sns.boxplot(data=[scientific_paper_articles, cnn_articles], showfliers=False)
+article_plot.set(xticklabels=[])
 article_figure = article_plot.get_figure()
 article_figure.savefig("articles.pdf")
+plt.clf()
 
 summary_plot = sns.boxplot(data=[scientific_paper_summaries, cnn_summaries], showfliers=False)
+summary_plot.set(xticklabels=[])
 summary_figure = summary_plot.get_figure()
 summary_figure.savefig("summaries.pdf")
