@@ -13,7 +13,6 @@ def next_symbol(cur_output_tokens, model):
   padded_with_batch = np.array(padded)[None, :]
   output, _ = model((padded_with_batch, padded_with_batch), n_accelerators=1)
   log_probs = output[0, len(cur_output_tokens), :]
-  print(int(np.argmax(log_probs)))
   return int(np.argmax(log_probs))
 
 def greedy_predict(article, model, summary_limit=400):
@@ -22,7 +21,7 @@ def greedy_predict(article, model, summary_limit=400):
   cur_output = 0
   EOS = 1
   i = 0
-  while cur_output != EOS and i <= 10:
+  while cur_output != EOS and i <= summary_limit:
     cur_output = next_symbol(cur_output_tokens, model)
     cur_output_tokens.append(cur_output)
     generated_output.append(cur_output)
