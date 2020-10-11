@@ -4,6 +4,7 @@ import data_handler
 
 base_path = "/home/yannick/Dropbox/Universität/Bachelorarbeit/Trained Models/"
 configs = ["C1T1", "C1T2", "C1T3", "C1R1", "C1R2", "C1R3"]
+configs2 = ["C2T1", "C2T2", "C2T3", "C2R1", "C2R2", "C2R3"]
 c1_data = []
 for element in configs:
     c1_data.append(base_path + element + "/log.txt")
@@ -16,6 +17,19 @@ def accuracy_graph(path, start=3):
     for i in range(len(text)):
         if i % 14 == 0:
             acc.append(float(text[i].split()[-1]))
+        if len(acc) >= 251:
+            break
+    f.close()
+    return acc
+
+def accuracy_graph_2(path, start=27):
+    f = open(path)
+    text = f.read().split()
+    text = text[start:]
+    acc = []
+    for i in range(len(text)):
+        if i % 37 == 0:
+            acc.append(float(text[i][:-5]))
     f.close()
     return acc
 
@@ -30,7 +44,7 @@ def moving_average(numbers, window_size=3):
     return moving_averages
 
 def plot_graph(paths, colors=None):
-    plot_data =  [moving_average(accuracy_graph(path)) for path in paths]
+    plot_data =  [moving_average(accuracy_graph(path, start=8)) for path in paths]
     if colors != None:
         for i, element in enumerate(plot_data):
             plt.plot(element, colors[i])
