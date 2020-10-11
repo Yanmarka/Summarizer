@@ -149,10 +149,13 @@ class Preprocessor():
               for line in document[section].splitlines():
                 f.write(line + '\n')
 
-  def record_length(self, data):
+  def record_length(self, data, sections=('article', 'highlights')):
     length = []
     for element in data:
-      length.append(len(element['article']) + len(element['highlights']))
+      value = 0
+      for section in sections:
+        value += len(element[section])
+      length.append(value)
     return length
 
   def five_numbers_summary(self, data):
