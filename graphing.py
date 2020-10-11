@@ -77,6 +77,41 @@ def plot_dataset(length_list, text='article'):
         top=False,         
         labelbottom=False) 
 
+def bar_graph(length_list, values):
+    def make_labels(values):
+        labels = []
+        labels.append ("<" + str(values[1]))
+        for value in values[2:-2]:
+            labels.append(str(value))
+        labels.append(">" + str(values[-1]))
+        return labels
+
+    buckets = []
+    labels = make_labels(values)
+
+    for i in range(len(values)):
+        counter = 0
+        for length_element in length_list:
+            if values[i] > length_element > values[i-1]:
+                counter += 1
+        buckets.append(counter)
+    buckets.append(len(length_list) - sum(buckets))
+
+    plt.bar([1,2,3,4,5], buckets[1:], tick_label=labels)
+
+    plt.xlabel("Length in subword units")
+    plt.ylabel("Number of samples in dataset")
 
 if __name__ == '__main__':
-    plot_graph(c1_data, ['#0000FF', '#00FFFF', '#1569C7', '#FF0000', '#DC143C', '#ff0081'])
+    loader = data_handler.Loader()
+    loader.load_file("scientific_papers_16k.txt")
+    loader.remove_long_examples(6000)
+    preprocessor = data_handler.Preprocessor()
+    length_merger = preprocessor.record_length(loader.data['train'], sections=['article'])
+
+    loader = data_handler.Loader()
+    loader.load_file("/scientific_papers_16k_2.txt")
+    loader.remove_long_examples(6000)
+    length_merger += preprocessor.record_length(loader.data['train'], sections=['article'])
+
+    plt.savefig("barchart_scientific_paper_summaries.pdf")
