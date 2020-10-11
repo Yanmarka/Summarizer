@@ -1,5 +1,5 @@
 jax==0.1.75
-tensorflow==2.2
+tensorflow==2.2.1
 tensorflow-metadata==0.22.2
 trax==1.2.4
 sentencepiece==0.1.91
