@@ -81,8 +81,8 @@ def bar_graph(length_list, values):
     def make_labels(values):
         labels = []
         labels.append ("<" + str(values[1]))
-        for value in values[2:-2]:
-            labels.append(str(value))
+        for i in range(values[2:]):
+            labels.append(str(values[i-1] + "-" + str(values[i])))
         labels.append(">" + str(values[-1]))
         return labels
 
@@ -113,5 +113,6 @@ if __name__ == '__main__':
     loader.load_file("/scientific_papers_16k_2.txt")
     loader.remove_long_examples(6000)
     length_merger += preprocessor.record_length(loader.data['train'], sections=['article'])
-
+    
+    bar_graph(length_merger, [0, 1000, 2000, 3000, 4000, 5000])
     plt.savefig("barchart_scientific_paper_summaries.pdf")
