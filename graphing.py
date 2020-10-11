@@ -82,7 +82,7 @@ def bar_graph(length_list, values):
         labels = []
         labels.append ("<" + str(values[1]))
         for i in range(len(values[2:])):
-            labels.append(str(values[i-1] + "-" + str(values[i])))
+            labels.append(str(values[i-1]) + "-" + str(values[i]))
         labels.append(">" + str(values[-1]))
         return labels
 
